@@ -35,14 +35,25 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<CategoriaModel>> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<CategoriaModel> buscarPorId(@PathVariable Long id) {
         Optional<CategoriaModel> request = categoriaService.buscarPorId(id);
-        return ResponseEntity.ok().body(request);
+
+        if(request.isPresent()) {
+            return ResponseEntity.ok(request.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletarCategoria(@PathVariable Long id) {
-        categoriaService.deletarCategoria(id);
-        return ResponseEntity.noContent().build();
+        Optional<CategoriaModel> request = categoriaService.buscarPorId(id);
+
+        if(request.isPresent()) {
+            categoriaService.deletarCategoria(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
